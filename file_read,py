@@ -1,0 +1,46 @@
+import pandas as pd
+from msal import ConfidentialClientApplication
+import requests
+
+# Authentication details
+authority = f'https://login.microsoftonline.com/{tenant_id}'
+client_id = 'your_client_id'
+client_secret = 'your_client_secret'
+scope = ['https://graph.microsoft.com/.default']
+site_url = 'https://your-sharepoint-site.sharepoint.com/sites/your-site'
+file_path = '/sites/your-site/Shared%20Documents/your-file.csv'  # Update with your file path
+
+# Authenticate using MSAL to get a token
+app = ConfidentialClientApplication(
+    client_id,
+    authority=authority,
+    client_credential=client_secret
+)
+
+result = app.acquire_token_silent(scope, account=None)
+
+if not result:
+    result = app.acquire_token_for_client(scopes=scope)
+
+if "access_token" in result:
+    access_token = result['access_token']
+else:
+    print(result.get("error"))
+    print(result.get("error_description"))
+    exit()
+
+# Download the CSV file
+url = f'{site_url}/_api/web/getfilebyserverrelativeurl(\'{file_path}\')/$value'
+headers = {
+    'Authorization': f'Bearer {access_token}',
+    'Accept': 'application/json;odata=verbose'
+}
+
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+    # Read the CSV file into a Pandas DataFrame
+    df = pd.read_csv(io.StringIO(response.content.decode('utf-8')))
+    print(df.head())  # Display the first few rows of the DataFrame
+else:
+    print("Failed to download the file:", response.text)
