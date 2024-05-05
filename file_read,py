@@ -1,15 +1,25 @@
-# get spreadsheet from sharepoint
-user = ''
-passwrd = ''
-sharepoint_file = '/sites/TechIROCCV/Shared%20Documents/General/Bridging/bridging_video_list_20240424.xlsx'
-sharepoint_url = 'https://spo.bhpbilliton.com/sites/TechIROCCV'
+import json
+from office365.sharepoint.client_context import ClientContext
+from office365.runtime.auth.user_credential import UserCredential
+from office365.sharepoint.files.file import File
+import pandas as pd
+
+# Load credentials from secrets.json
+with open('/secrets.json', 'r') as file:
+    secrets = json.load(file)
+
+user = secrets.get("user", "")
+passwrd = secrets.get("pass", "")
+
+sharepoint_file = '/sites/TechIROCCV/Shared Documents/General/Bridging/bridging_video_list_20240424.xlsx'
+sharepoint_url = 'https://xxxx.com/sites/TechIROCCV'
 
 
 def get_sharepoint_context():
     user_credentials = UserCredential(user, passwrd)
     ctx = ClientContext(sharepoint_url).with_credentials(user_credentials)
     return ctx
- 
+
 
 def get_sharepoint_file():
     ctx = get_sharepoint_context()
