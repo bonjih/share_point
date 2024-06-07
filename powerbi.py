@@ -5,8 +5,12 @@ chunksize = 1000000  # Set your desired chunk size
 
 # Load data in chunks
 chunks = []
-for chunk in pd.read_csv('df2.csv', chunksize=chunksize):
+for i in range(0, len(dataset), chunksize):
+    chunk = dataset[i:i+chunksize]
+    print(chunk)
     chunks.append(chunk)
+
+data = pd.concat(chunks, ignore_index=True)
 
 # Concatenate chunks into a single DataFrame
 data = pd.concat(chunks, ignore_index=True)
