@@ -1,3 +1,96 @@
+-- Add calculated columns for 'day' and 'hour'
+IROCCV_T25_Bridge_Dataset[day] = FORMAT(IROCCV_T25_Bridge_Dataset[frame_ts], "yyyy-MM-dd")
+IROCCV_T25_Bridge_Dataset[hour] = HOUR(IROCCV_T25_Bridge_Dataset[frame_ts])
+
+-- Add a calculated column for cleaned 'split_name'
+IROCCV_T25_Bridge_Dataset[split_name_clean] = LOWER(TRIM(IROCCV_T25_Bridge_Dataset[split_name]))
+
+-- Group by 'day' and 'hour' and count frames
+GroupedData = 
+SUMMARIZE(
+    IROCCV_T25_Bridge_Dataset,
+    IROCCV_T25_Bridge_Dataset[day],
+    IROCCV_T25_Bridge_Dataset[hour],
+    "FrameCount", COUNT(IROCCV_T25_Bridge_Dataset[frame_ts])
+)
+
+
+-- Measure to count frames for a specific day
+FrameCount = COUNT(IROCCV_T25_Bridge_Dataset[frame_ts])
+
+-- Measures to count frames for each specific day
+-- Example for a specific day, repeat for each day you need
+FrameCount_2023_01_01 = CALCULATE([FrameCount], IROCCV_T25_Bridge_Dataset[day] = "2023-01-01")
+
+-- Pivot table visual can be created in Power BI using these measures
+
+-- Group by 'hour' and count frames
+FrameCountsPerHour = 
+SUMMARIZE(
+    IROCCV_T25_Bridge_Dataset,
+    IROCCV_T25_Bridge_Dataset[hour],
+    "FrameCount", COUNT(IROCCV_T25_Bridge_Dataset[frame_ts])
+)
+
+-- Create a filtered table for bridged data
+BridgedData = 
+FILTER(
+    IROCCV_T25_Bridge_Dataset,
+    IROCCV_T25_Bridge_Dataset[bridged] = TRUE()
+)
+
+-- Group by 'hour' and count bridged frames
+BridgedFrameCountsPerHour = 
+SUMMARIZE(
+    BridgedData,
+    BridgedData[hour],
+    "BridgedCount", COUNT(BridgedData[frame_ts])
+)
+
+-- Group by 'hour' and 'camera_name' and count usage
+CameraHourlyCounts = 
+SUMMARIZE(
+    IROCCV_T25_Bridge_Dataset,
+    IROCCV_T25_Bridge_Dataset[hour],
+    IROCCV_T25_Bridge_Dataset[camera_name],
+    "UsageCount", COUNT(IROCCV_T25_Bridge_Dataset[frame_ts])
+)
+
+-- Create a matrix visual in Power BI to display the counts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import pandas as pd
 
 # Define chunk size
