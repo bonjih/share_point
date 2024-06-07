@@ -1,8 +1,8 @@
 let
-    Source = #table({"Epoch"},{{1486933998060}}),
-    #"Added Custom" = Table.AddColumn(Source, "Custom", each #datetime(1970,1,1,0,0,0)+#duration(0,0,0,[Epoch]/1000))
+    Source = yourDataSource,
+    AddedCustom = Table.AddColumn(Source, "frame_ts_datetime", each #datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [frame_ts] / 1000), type datetime)
 in
-    #"Added Custom"
+    AddedCustom
 
 -- Add calculated columns for 'day' and 'hour'
 IROCCV_T25_Bridge_Dataset[day] = FORMAT(IROCCV_T25_Bridge_Dataset[frame_ts], "yyyy-MM-dd")
