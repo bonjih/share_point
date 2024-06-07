@@ -1,3 +1,18 @@
+day = 
+DATE(YEAR(IROCCV_T25_Bridge_Dataset[frame_ts_datetime]), MONTH(IROCCV_T25_Bridge_Dataset[frame_ts_datetime]), DAY(IROCCV_T25_Bridge_Dataset[frame_ts_datetime]))
+
+hour = 
+HOUR(IROCCV_T25_Bridge_Dataset[frame_ts_datetime])
+
+
+
+
+
+
+
+
+
+
 let
     Source = yourDataSource,
     AddedCustom = Table.AddColumn(Source, "frame_ts_datetime", each #datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [frame_ts] / 1000), type datetime)
